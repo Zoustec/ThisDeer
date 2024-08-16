@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="TemplateData/style.css">
   <link rel="manifest" href="manifest.webmanifest.json">
   <script src="InstallPWA.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
   <script src="GPS.js"></script>
   <script src="GYRO.js"></script>
   <script src="Camera.js"></script>
@@ -26,7 +25,6 @@
     <div id="unity-warning"> </div>
   </div>
   <div id="orientationData" ></div>
-  <button id="installButton" style="display: none;">Install App</button>
 
   <script>
     window.addEventListener("load", function () {
@@ -113,7 +111,6 @@
       });
     };
     document.body.appendChild(script);
-	eruda.init();
   </script>
 
 </body>
