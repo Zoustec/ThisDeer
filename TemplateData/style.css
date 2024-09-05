@@ -135,3 +135,15 @@ body {
     object-fit: cover;
     display: none;
 }
+
+.ldBar-label {
+    position: absolute;
+    top: 100%;
+    left: 60%;
+    transform: translate(-50%, 50%);
+    color: rgb(120, 104, 104);
+    font-family: 'Varela Round', sans-serif;
+    font-size: 1.5em;
+    font-weight: 600;
+    pointer-events: none;
+}

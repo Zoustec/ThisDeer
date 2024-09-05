@@ -1,6 +1,56 @@
-document.addEventListener('click', IosDeviceCHECK);
+//document.addEventListener('click', IosDeviceCHECK);
 //window.addEventListener('load', InitDeviceMotion);
 //window.addEventListener('load', InitDeviceOrientation);
+
+let orientationDiv;
+let gyroIsTracking = false; // 追蹤狀態
+let alreadyGyro = false;
+
+document.addEventListener('DOMContentLoaded', () => {
+  orientationDiv = document.getElementById('orientationData');
+});
+
+function IsGyroSupport() {
+  // 確保 orientationDiv 已經初始化
+  if (!orientationDiv) {
+    orientationDiv = document.getElementById('orientationData');
+  }
+
+  // 檢查是否支援 DeviceOrientationEvent
+  if (typeof DeviceOrientationEvent !== 'undefined') {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      // 顯示 orientationDiv 以便用戶可以點擊以啟動授權過程
+      orientationDiv.style.display = 'block';
+      orientationDiv.addEventListener('click', () => {
+        // 點擊 orientationDiv 後請求許可權
+        DeviceOrientationEvent.requestPermission()
+          .then(function (response) {
+            if (response === 'granted') {
+              console.log('Device orientation permission granted.');
+            } else {
+              console.log('Device orientation permission denied.');
+            }
+            // 隱藏 orientationDiv
+            orientationDiv.style.display = 'none';
+            orientationDiv.removeEventListener('click', arguments.callee); // 移除事件處理器
+            alreadyGyro = true;
+          })
+          .catch(function (error) {
+            console.error('Device orientation request failed:', error);
+            // 隱藏 orientationDiv
+            orientationDiv.style.display = 'none';
+            orientationDiv.removeEventListener('click', arguments.callee); // 移除事件處理器
+            alreadyGyro = true;
+          });
+      });
+    } else {
+      // 不需要請求許可權，只是確認支援
+      console.log('DeviceOrientationEvent is supported but no permission needed.');
+    }
+  } else {
+    console.log('Device does not support DeviceOrientationEvent.');
+  }
+}
 
 // IOS啟動陀螺儀判斷
 function IosDeviceCHECK(event) {
@@ -11,28 +61,34 @@ function IosDeviceCHECK(event) {
         if (response === 'granted') {
           //InitDeviceMotion();
           InitDeviceOrientation();
+          alreadyGyro = true;
         }
       })
-      .catch(console.error);
+      .catch(function (error) {
+        console.error('Device orientation request failed:', error);
+      });
   } else {
     // 該瀏覽器不需要請求許可權
     //InitDeviceMotion();
     InitDeviceOrientation();
   }
 
-  var orientationDiv = document.getElementById('orientationData');
   if (orientationDiv) {
-    orientationDiv.parentNode.removeChild(orientationDiv);
-    document.removeEventListener('click', IosDeviceCHECK);
+    orientationDiv.style.display = 'none';
+    orientationDiv.removeEventListener('click', IosDeviceCHECK);
   }
 
 }
 
 function StartGyro() {
-  //InitDeviceMotion();
-  InitDeviceOrientation();
+  if (alreadyGyro === true) {
+    //InitDeviceMotion();
+    InitDeviceOrientation();
+  } else {
+    orientationDiv.style.display = 'block';
+    orientationDiv.addEventListener('click', IosDeviceCHECK);
+  }
 }
-
 
 // 停止裝置運動和方向事件的監聽
 function StopGyro() {
@@ -44,6 +100,7 @@ function StopGyro() {
 
   if (window.DeviceOrientationEvent) {
     window.removeEventListener('deviceorientation', DeviceOrientation);
+    gyroIsTracking = false;
   } else {
     console.log('裝置不支援DeviceOrientationEvent');
   }
@@ -53,6 +110,8 @@ function StopGyro() {
 function InitDeviceMotion() {
   if (window.DeviceMotionEvent) {
     window.addEventListener('devicemotion', DeviceMotion);
+    gyroIsTracking = true;
+    alreadyGyro = true;
   } else {
     console.log('裝置不支援DeviceMotionEvent');
   }
@@ -100,9 +159,17 @@ function DeviceMotion(event) {
 
   var jsonData = JSON.stringify(motionData);
 
-  // 調用 Unity 方法，傳遞 JSON 字符串
-  if (typeof gameInstance.SendMessage !== 'undefined') {
-    gameInstance.SendMessage('DeviceManager', 'OnDeviceMotion', jsonData);
+  try {
+    // 調用 Unity 方法，傳遞 JSON 字符串
+    if (typeof gameInstance.SendMessage !== 'undefined') {
+      gameInstance.SendMessage('DeviceManager', 'OnDeviceMotion', jsonData);
+    } else {
+      StopGyro();
+      console.warn('SendMessage 方法未定義');
+    }
+  } catch (error) {
+    StopGyro();
+    console.error('調用 SendMessage 方法時發生錯誤:', error);
   }
 }
 
@@ -110,6 +177,8 @@ function DeviceMotion(event) {
 function InitDeviceOrientation() {
   if (window.DeviceOrientationEvent) {
     window.addEventListener('deviceorientation', DeviceOrientation);
+    gyroIsTracking = true;
+    alreadyGyro = true;
   } else {
     console.log('裝置不支援DeviceOrientationEvent');
   }
@@ -131,8 +200,16 @@ function DeviceOrientation(event) {
 
   var jsonData = JSON.stringify(orientationData);
 
-  // 調用 Unity 方法，傳遞 JSON 字符串
-  if (typeof gameInstance.SendMessage !== 'undefined') {
-    gameInstance.SendMessage('DeviceManager', 'OnDeviceOrientation', jsonData);
+  try {
+    // 調用 Unity 方法，傳遞 JSON 字符串
+    if (typeof gameInstance.SendMessage !== 'undefined') {
+      gameInstance.SendMessage('DeviceManager', 'OnDeviceOrientation', jsonData);
+    } else {
+      StopGyro();
+      console.warn('SendMessage 方法未定義');
+    }
+  } catch (error) {
+    StopGyro();
+    console.error('調用 SendMessage 方法時發生錯誤:', error);
   }
 }

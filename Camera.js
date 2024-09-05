@@ -3,27 +3,31 @@
 //     await PauseCamera();
 // });
 
+let video;
+let cameraStream = null;
+let cameraIsPlaying = false; // 追蹤狀態
+
 document.addEventListener('DOMContentLoaded', () => {
     video = document.getElementById('video');
 
     video.addEventListener('play', () => {
         video.style.display = 'block';
+        cameraIsPlaying = true;
     });
 
     video.addEventListener('pause', () => {
         video.style.display = 'none';
+        cameraIsPlaying = false;
     });
 
     video.addEventListener('ended', () => {
         video.style.display = 'none';
+        cameraIsPlaying = false;
     });
 });
 
-let cameraStream = null;
-let video = document.getElementById('video');
-
+// 啟動相機
 async function StartCameraAsync() {
-    
     if (!video) {
         console.error("Video element not found");
         return;
@@ -55,40 +59,56 @@ async function StartCameraAsync() {
         video.width = window.innerWidth;
     }
 }
+
 function StartCamera() {
     StartCameraAsync().catch(error => {
-        console.error('Error while Start camera:', error);
+        console.error('Error while starting camera:', error);
     });
 }
 
+// 暫停相機
 async function PauseCameraAsync() {
+    if (!cameraStream) {
+        console.warn('No camera stream found, attempting to start camera before pausing');
+        await StartCameraAsync();
+    }
+
     if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.enabled = false);
         console.log('Camera paused');
     } else {
-        console.warn('No camera stream to pause');
+        console.warn('Failed to access camera stream for pausing');
     }
 }
+
 function PauseCamera() {
     PauseCameraAsync().catch(error => {
-        console.error('Error while Pause camera:', error);
+        console.error('Error while pausing camera:', error);
     });
 }
 
+// 恢復相機
 async function ResumeCameraAsync() {
+    if (!cameraStream) {
+        console.warn('No camera stream found, attempting to start camera before resuming');
+        await StartCameraAsync();
+    }
+
     if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.enabled = true);
         console.log('Camera resumed');
     } else {
-        console.warn('No camera stream to resume');
+        console.warn('Failed to access camera stream for resuming');
     }
 }
+
 function ResumeCamera() {
     ResumeCameraAsync().catch(error => {
-        console.error('Error while Resume camera:', error);
+        console.error('Error while resuming camera:', error);
     });
 }
 
+// 停止相機
 async function StopCameraAsync() {
     if (cameraStream) {
         cameraStream.getTracks().forEach(track => track.stop());
@@ -101,8 +121,9 @@ async function StopCameraAsync() {
         console.warn('No camera stream to stop');
     }
 }
+
 function StopCamera() {
     StopCameraAsync().catch(error => {
-        console.error('Error while Stop camera:', error);
+        console.error('Error while stopping camera:', error);
     });
 }

@@ -1,9 +1,9 @@
-const cacheName = "Zoustec-ThisDeer-1.0.0";
+const cacheName = "Zoustec-ThisDeer-1.0.3";
 const contentToCache = [
-    "Build/Pet.loader.js",
-    "Build/Pet.framework.js.unityweb",
-    "Build/Pet.data.unityweb",
-    "Build/Pet.wasm.unityweb",
+    "Build/main.loader.js",
+    "Build/main.framework.js",
+    "Build/main.data.unityweb",
+    "Build/main.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
