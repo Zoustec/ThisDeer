@@ -4,11 +4,12 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <title>ThisDeer</title>
+  <title>南投人本交通「這投鹿抓寶圖鑑」</title>
   <link rel="shortcut icon" href="TemplateData/favicon.ico">
   <link rel="stylesheet" href="TemplateData/style.css">
   <link rel="manifest" href="manifest.webmanifest.json">
   <link rel="stylesheet" type="text/css" href="TemplateData/loading-bar.css" />
+  <script src="analytics.js"></script>
   <script type="text/javascript" src="TemplateData/loading-bar.js"></script>
   <script src="GPS.js"></script>
   <script src="GYRO.js"></script>
@@ -20,13 +21,8 @@
   <div id="unity-container" class="unity-desktop">
     <canvas id="unity-canvas" tabindex="-1" Style="width:100%;height:100%;"></canvas>
     <div id="unity-loading-bar">
-      <div class="ldBar" 
-        label-center 
-        data-type="fill" 
-        data-fill-background-extrude="5" 
-        data-fill-dir="btt" 
-        data-img="TemplateData/unity-logo-light.png"
-        data-text="%">
+      <div class="ldBar" label-center data-type="fill" data-fill-background-extrude="5" data-fill-dir="btt"
+        data-img="TemplateData/unity-logo-light.png" data-text="%">
       </div>
     </div>
     <div id="unity-warning"> </div>
@@ -72,8 +68,8 @@
       codeUrl: buildUrl + "/main.wasm.unityweb",
       streamingAssetsUrl: "StreamingAssets",
       companyName: "/Zoustec",
-      productName: "/ThisDeer",
-      productVersion: "/1.0.3",
+      productName: "/南投人本交通「這投鹿抓寶圖鑑」",
+      productVersion: "/1.0.4",
       showBanner: unityShowBanner,
       webglContextAttributes: {
         preserveDrawingBuffer: true,
@@ -103,8 +99,8 @@
         loadingBar.style.display = "none";
       }).catch((message) => {
         window.location.href = window.location.pathname;
-		console.log(message);
-		alert("頁面顯示錯誤，請刷新再試一次。");
+        console.log(message);
+        alert("頁面顯示錯誤，請刷新再試一次。");
       });
     };
     document.body.appendChild(script);

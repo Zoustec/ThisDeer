@@ -1,4 +1,4 @@
-const cacheName = "Zoustec-ThisDeer-1.0.3";
+const cacheName = "Zoustec-南投人本交通「這投鹿抓寶圖鑑」-1.0.4";
 const contentToCache = [
     "Build/main.loader.js",
     "Build/main.framework.js",
